@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PolicyLens AU — Australian motor-insurance policy decoder</title>
+  <meta name="description" content="Upload your Australian motor-insurance PDS, policy schedule, renewal notice or quote PDF and get plain-English findings on excesses, exclusions, sub-limits and claim conditions.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="PolicyLens AU — Australian motor-insurance policy decoder">
+  <meta property="og:description" content="Upload your Australian motor-insurance PDS, policy schedule, renewal notice or quote and get a plain-English breakdown of what it actually says.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0f766e">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       CSS CUSTOM PROPERTIES — light + dark
+    ========================================================= */
+    :root {
+      --bg:   #ffffff;
+      --fg:   #0b1b33;
+      --mu:   #475569;
+      --ac:   #0f766e;
+      --on:   #ffffff;
+      --ac2:  #e6f4f2;
+      --bd:   #dbe3ec;
+      --cd:   #f6f8fb;
+      --cr:   #b42318;
+      --mo:   #b45309;
+      --in:   #1d4ed8;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+      --transition: 0.2s ease;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg:  #0b1220;
+        --fg:  #e8eef7;
+        --mu:  #a3b1c6;
+        --ac:  #2dd4bf;
+        --on:  #04211e;
+        --ac2: #10302d;
+        --bd:  #26344a;
+        --cd:  #111b2e;
+        --cr:  #f97066;
+        --mo:  #fbbf24;
+        --in:  #7aa2ff;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg:  #0b1220;
+      --fg:  #e8eef7;
+      --mu:  #a3b1c6;
+      --ac:  #2dd4bf;
+      --on:  #04211e;
+      --ac2: #10302d;
+      --bd:  #26344a;
+      --cd:  #111b2e;
+      --cr:  #f97066;
+      --mo:  #fbbf24;
+      --in:  #7aa2ff;
+    }
+
+    /* =========================================================
+       RESET + BASE
+    ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      /* Offset for sticky header when jumping to anchors */
+      scroll-padding-top: calc(60px + env(safe-area-inset-top, 0px) + 8px);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      background: var(--bg);
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      transition: background var(--transition), color var(--transition);
+    }
+
+    /* =========================================================
+       TYPOGRAPHY
+    ========================================================= */
+    h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      line-height: 1.1;
+      font-weight: 800;
+      margin: 0 0 16px;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      font-size: clamp(22px, 3.5vw, 32px);
+      line-height: 1.2;
+      font-weight: 800;
+      margin: 0 0 12px;
+      letter-spacing: -0.01em;
+    }
+    h3 { font-size: 17px; font-weight: 600; margin: 0 0 6px; }
+    h4 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+    p  { margin: 0 0 12px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* =========================================================
+       LAYOUT
+    ========================================================= */
+    .w {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    section { padding: 52px 0; }
+
+    .g {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .g.c {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .g.two {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+
+    /* =========================================================
+       FOCUS / ACCESSIBILITY
+    ========================================================= */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    summary:focus-visible,
+    label:focus-visible {
+      outline: 3px solid var(--in);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Visually hidden but accessible */
+    .vh {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    /* =========================================================
+       HEADER + NAV
+    ========================================================= */
+    header {
+      position: sticky;
+      top: env(safe-area-inset-top, 0px);
+      background: var(--bg);
+      border-bottom: 1px solid var(--bd);
+      z-index: 100;
+      transition: background var(--transition);
+    }
+    header .w {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 12px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 19px;
+      color: var(--fg);
+      text-decoration: none;
+      flex-shrink: 0;
+      letter-spacing: -0.02em;
+    }
+    .logo b { color: var(--ac); font-weight: 800; }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      justify-content: center;
+    }
+    nav a {
+      color: var(--mu);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 5px 9px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+      white-space: nowrap;
+    }
+    nav a:hover { color: var(--fg); background: var(--cd); }
+
+    /* Header right-side controls */
+    .hdr-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* Dark-mode toggle */
+    #theme-btn {
+      background: none;
+      border: 1px solid var(--bd);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--mu);
+      font-size: 16px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition), color var(--transition);
+      flex-shrink: 0;
+    }
+    #theme-btn:hover { background: var(--cd); color: var(--fg); }
+
+    /* Mobile hamburger */
+    #menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--bd);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--mu);
+      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #menu-btn:hover { background: var(--cd); color: var(--fg); }
+
+    /* Mobile nav drawer */
+    #mobile-nav {
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--bd);
+      background: var(--bg);
+    }
+    #mobile-nav a {
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      transition: background var(--transition);
+    }
+    #mobile-nav a:hover { background: var(--cd); }
+    #mobile-nav.open { display: flex; }
+
+    @media (max-width: 760px) {
+      nav { display: none; }
+      #menu-btn { display: flex; }
+    }
+
+    /* =========================================================
+       BUTTONS
+    ========================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--ac);
+      color: var(--on);
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 12px 22px;
+      font: 600 15px/1 'Inter', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity var(--transition), box-shadow var(--transition);
+    }
+    .btn:hover { opacity: 0.88; box-shadow: var(--shadow-md); }
+    .btn:active { opacity: 0.78; }
+    .btn.s {
+      background: transparent;
+      color: var(--ac);
+      border: 1.5px solid var(--ac);
+    }
+    .btn.s:hover { background: var(--ac2); }
+    .btn:disabled,
+    .btn[aria-disabled="true"] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* =========================================================
+       UTILITY
+    ========================================================= */
+    .mu  { color: var(--mu); }
+    .sm  { font-size: 14px; }
+    .xs  { font-size: 12.5px; }
+
+    /* Bordered disclaimer / note */
+    .dis {
+      font-size: 14px;
+      color: var(--mu);
+      border-left: 3px solid var(--ac);
+      padding: 6px 12px;
+      margin: 12px 0 0;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      background: var(--ac2);
+    }
+
+    /* =========================================================
+       CARDS
+    ========================================================= */
+    .card {
+      background: var(--cd);
+      border: 1px solid var(--bd);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: box-shadow var(--transition);
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+    .card p { margin: 0; color: var(--mu); font-size: 14.5px; }
+    .card h3 { margin-bottom: 8px; }
+
+    /* Step number badge inside How-it-works cards */
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ac);
+      color: var(--on);
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    /* Category chips */
+    .chip {
+      background: var(--ac2);
+      border: 1px solid var(--ac);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--fg);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* =========================================================
+       UPLOAD SECTION
+    ========================================================= */
+    #upload { background: var(--ac2); }
+
+    .up {
+      background: var(--bg);
+      border: 1px solid var(--bd);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Drop zone */
+    .drop {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 2.5px dashed var(--ac);
+      border-radius: var(--radius-md);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--bg);
+      transition: background var(--transition), border-color var(--transition);
+      min-height: 120px;
+    }
+    .drop:hover,
+    .drop.drag-over { background: var(--ac2); border-style: solid; }
+    .drop .drop-icon { font-size: 32px; line-height: 1; }
+    .drop strong { display: block; font-size: 16px; }
+
+    /* Form grid */
+    .f {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin: 18px 0 14px;
+    }
+    .f-group { display: flex; flex-direction: column; }
+
+    label.l {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--mu);
+      margin-bottom: 5px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--bd);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      color: var(--fg);
+      font: inherit;
+      font-size: 15px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    input[type="text"]:focus,
+    select:focus {
+      border-color: var(--ac);
+      box-shadow: 0 0 0 3px rgba(15,118,110,.15);
+      outline: none;
+    }
+
+    /* Checkbox row */
+    .chk-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14.5px;
+      margin: 6px 0 18px;
+      cursor: pointer;
+    }
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--ac);
+      cursor: pointer;
+    }
+
+    /* Upload privacy notes */
+    ul.priv {
+      margin: 16px 0 0;
+      padding: 0 0 0 18px;
+      list-style: disc;
+    }
+    ul.priv li {
+      font-size: 13px;
+      color: var(--mu);
+      margin-bottom: 4px;
+    }
+
+    /* Error message */
+    #err, .err {
+      color: var(--cr);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* =========================================================
+       ANALYSIS STATUS
+    ========================================================= */
+    #stat { background: var(--cd); }
+
+    ol.st {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0;
+    }
+    ol.st li {
+      padding: 10px 12px;
+      color: var(--mu);
+      font-size: 15px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    ol.st li.d {
+      color: var(--fg);
+    }
+    ol.st li.d::before {
+      content: "✓";
+      color: var(--ac);
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    ol.st li.a {
+      color: var(--fg);
+      font-weight: 600;
+      background: var(--ac2);
+    }
+    ol.st li.a::before {
+      content: "…";
+      color: var(--ac);
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Spinner for active step */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--bd);
+      border-top-color: var(--ac);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* =========================================================
+       RESULTS / FINDINGS
+    ========================================================= */
+    .pill {
+      display: inline-block;
+      padding: 3px 14px;
+      border-radius: 999px;
+      background: var(--ac);
+      color: var(--on);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .tag {
+      font-size: 11px;
+      border: 1px solid currentColor;
+      border-radius: 5px;
+      padding: 1px 7px;
+      vertical-align: middle;
+      font-weight: 600;
+    }
+
+    .fnd {
+      border: 1px solid var(--bd);
+      border-left: 5px solid currentColor;
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin: 14px 0;
+      background: var(--cd);
+      color: var(--in);
+    }
+    .fnd.cr { color: var(--cr); }
+    .fnd.mo { color: var(--mo); }
+    .fnd > * { color: var(--fg); }
+    .fnd h4 .tag { color: inherit; }
+    .fnd p { margin: 5px 0; font-size: 14.5px; }
+
+    blockquote {
+      margin: 8px 0;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-left: 3px solid var(--bd);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 13.5px;
+      color: var(--mu);
+      font-style: italic;
+    }
+
+    /* =========================================================
+       FAQ / POLICIES ACCORDIONS
+    ========================================================= */
+    details {
+      border-bottom: 1px solid var(--bd);
+      padding: 14px 0;
+    }
+    details:first-of-type { border-top: 1px solid var(--bd); }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: "+";
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--ac);
+      flex-shrink: 0;
+      transition: transform var(--transition);
+    }
+    details[open] summary::after { transform: rotate(45deg); }
+
+    details p {
+      color: var(--mu);
+      margin: 10px 0 4px;
+      font-size: 14.5px;
+    }
+
+    /* =========================================================
+       COMPARISON TABLE
+    ========================================================= */
+    .tw { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--bd); }
+    table { border-collapse: collapse; width: 100%; min-width: 540px; }
+    td, th { border: 1px solid var(--bd); padding: 11px 14px; text-align: left; vertical-align: top; font-size: 14.5px; }
+    th {
+      background: var(--ac2);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    td:first-child { color: var(--mu); }
+    td:last-child { color: var(--fg); font-weight: 500; }
+    tr:nth-child(even) td { background: var(--cd); }
+
+    /* =========================================================
+       PRICING CARDS
+    ========================================================= */
+    .pr b {
+      font-size: 28px;
+      display: block;
+      margin: 8px 0 4px;
+      color: var(--ac);
+      font-weight: 800;
+    }
+    .pr .card { position: relative; }
+    .pr .badge {
+      position: absolute;
+      top: -10px;
+      right: 16px;
+      background: var(--ac);
+      color: var(--on);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       AFFILIATE BOX
+    ========================================================= */
+    .aff {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border: 1px dashed var(--bd);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+    }
+    .aff h4 { margin: 0 0 6px; }
+    .aff p { margin: 6px 0; font-size: 14px; }
+    .aff .d { font-size: 12px; color: var(--mu); }
+    .aff .btn { padding: 9px 16px; font-size: 14px; }
+
+    /* =========================================================
+       HERO TRUST STRIP
+    ========================================================= */
+    .trust-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin: 16px 0;
+    }
+    .trust-strip span {
+      font-size: 13.5px;
+      color: var(--mu);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .trust-strip span::before {
+      content: "✓";
+      color: var(--ac);
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    /* =========================================================
+       BACK TO TOP
+    ========================================================= */
+    #btt {
+      position: fixed;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      right: 20px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--ac);
+      color: var(--on);
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+      z-index: 99;
+    }
+    #btt.visible { opacity: 1; pointer-events: auto; }
+    #btt:hover { opacity: 0.85; }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+    footer {
+      border-top: 1px solid var(--bd);
+      padding: 32px 0;
+      font-size: 13px;
+      color: var(--mu);
+    }
+    footer .w {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .footer-left { flex: 1; min-width: 240px; }
+    .footer-right { flex: 1; min-width: 240px; text-align: right; }
+    @media (max-width: 600px) {
+      .footer-right { text-align: left; }
+    }
+
+    /* =========================================================
+       PRINT
+    ========================================================= */
+    @media print {
+      body * { visibility: hidden; }
+      #report, #report * { visibility: visible; }
+      #report { position: absolute; left: 0; top: 0; width: 100%; }
+      .np { display: none !important; }
+      header, footer, #btt { display: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+<noscript>
+  <div style="background:#b42318;color:#fff;text-align:center;padding:14px 20px;font-weight:600;font-size:14px;font-family:system-ui,sans-serif;">
+    JavaScript is required to decode your policy. Please enable JavaScript and reload the page.
+  </div>
+</noscript>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header>
+  <div class="w">
+    <a class="logo" href="#top" aria-label="PolicyLens AU — home">Policy<b>Lens</b> AU</a>
+
+    <nav aria-label="Main navigation">
+      <a href="#how">How it works</a>
+      <a href="#check">What we check</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#policies">Policies</a>
+    </nav>
+
+    <div class="hdr-controls">
+      <!-- Dark mode toggle -->
+      <button id="theme-btn" aria-label="Toggle dark mode" title="Toggle dark / light mode">🌙</button>
+      <!-- Mobile hamburger -->
+      <button id="menu-btn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav">☰</button>
+    </div>
+  </div>
+
+  <!-- Mobile nav (shown when menu is open) -->
+  <nav id="mobile-nav" aria-label="Mobile navigation" hidden>
+    <a href="#how"      onclick="closeMobileNav()">How it works</a>
+    <a href="#check"    onclick="closeMobileNav()">What we check</a>
+    <a href="#pricing"  onclick="closeMobileNav()">Pricing</a>
+    <a href="#faq"      onclick="closeMobileNav()">FAQ</a>
+    <a href="#policies" onclick="closeMobileNav()">Policies</a>
+    <a href="#upload"   onclick="closeMobileNav()" class="btn" style="margin-top:6px;text-align:center;">Decode my policy</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section aria-labelledby="hero-h1">
+    <div class="w">
+      <h1 id="hero-h1">Your car insurance policy,<br>decoded in plain English.</h1>
+      <p class="mu" style="max-width:680px; font-size:18px; line-height:1.5;">
+        Upload your Australian motor-insurance PDS, policy schedule, renewal notice or quote.
+        We help you understand excesses, exclusions, sub-limits and claim conditions before you
+        pay, renew or claim.
+      </p>
+      <p style="display:flex; flex-wrap:wrap; gap:10px; margin:20px 0;">
+        <a class="btn" href="#upload">Decode my policy</a>
+        <a class="btn s" href="#how">See how it works</a>
+      </p>
+      <div class="trust-strip" role="list" aria-label="Key features">
+        <span role="listitem">No sign-up required</span>
+        <span role="listitem">Australian motor-insurance focus</span>
+        <span role="listitem">Findings linked to your document</span>
+        <span role="listitem">Downloadable PDF report</span>
+        <span role="listitem">Nothing kept after you close the page</span>
+      </div>
+      <p class="dis" role="note">
+        PolicyLens AU provides educational policy analysis. It is not legal, financial,
+        insurance or claims advice.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       UPLOAD
+  ============================================================ -->
+  <section id="upload" aria-labelledby="upload-h2">
+    <div class="w">
+      <div class="up">
+        <h2 id="upload-h2">Decode my policy</h2>
+        <p><strong>Upload your Australian motor-insurance document. No sign-up required.</strong></p>
+
+        <!-- Hidden file input -->
+        <input
+          id="file"
+          type="file"
+          accept="application/pdf,.pdf"
+          aria-describedby="file-hint"
+          style="position:absolute;left:-9999px;width:1px;height:1px;"
+        >
+
+        <!-- Drop zone -->
+        <label
+          class="drop"
+          for="file"
+          id="dz"
+          role="button"
+          tabindex="0"
+          aria-describedby="file-hint"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('file').click();}"
+        >
+          <span class="drop-icon" aria-hidden="true">📄</span>
+          <strong>Choose a PDF or drop it here</strong>
+          <span class="mu sm" id="file-hint">PDF only · up to 10 MB · PDS, policy schedule, renewal notice or quote</span>
+          <span class="mu sm" id="fn" aria-live="polite" aria-atomic="true" style="font-weight:600;"></span>
+        </label>
+
+        <!-- Form fields -->
+        <div class="f" role="group" aria-label="Optional document details">
+          <div class="f-group">
+            <label class="l" for="dt">Document type <abbr title="required" style="color:var(--cr);">*</abbr></label>
+            <select id="dt" aria-required="true">
+              <option value="">Select…</option>
+              <option value="Product Disclosure Statement">Product Disclosure Statement</option>
+              <option value="Policy schedule">Policy schedule</option>
+              <option value="Renewal notice">Renewal notice</option>
+              <option value="Quote document">Quote document</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="l" for="ins">Insurer name <span class="mu">(optional)</span></label>
+            <input id="ins" type="text" autocomplete="off" placeholder="e.g. AAMI, NRMA">
+          </div>
+          <div class="f-group">
+            <label class="l" for="pt">Policy type <span class="mu">(optional)</span></label>
+            <select id="pt">
+              <option value="">—</option>
+              <option value="Comprehensive">Comprehensive</option>
+              <option value="Third Party Property Damage">Third Party Property Damage</option>
+              <option value="Third Party Fire and Theft">Third Party Fire and Theft</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="Commercial Motor">Commercial Motor</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="l" for="stt">State or territory <span class="mu">(optional)</span></label>
+            <select id="stt">
+              <option value="">—</option>
+              <option value="ACT">ACT</option>
+              <option value="NSW">NSW</option>
+              <option value="NT">NT</option>
+              <option value="QLD">QLD</option>
+              <option value="SA">SA</option>
+              <option value="TAS">TAS</option>
+              <option value="VIC">VIC</option>
+              <option value="WA">WA</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="l" for="vt">Vehicle type <span class="mu">(optional)</span></label>
+            <select id="vt">
+              <option value="">—</option>
+              <option value="Car">Car</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="Commercial vehicle">Commercial vehicle</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="chk-row">
+          <input type="checkbox" id="rn">
+          My policy is up for renewal soon <span class="mu sm">(optional)</span>
+        </label>
+
+        <p>
+          <button class="btn" id="go">
+            <span aria-hidden="true">🔍</span> Decode my policy
+          </button>
+          &nbsp;
+          <span id="err" role="alert" aria-live="assertive" aria-atomic="true"></span>
+        </p>
+
+        <ul class="priv" aria-label="Privacy notes">
+          <li>In this version your file is read inside your browser. It isn't uploaded, sold or shared, and it isn't used to train AI models.</li>
+          <li>Nothing is kept once you close or refresh the page.</li>
+          <li>Please remove unnecessary personal information before uploading where possible.</li>
+          <li>Optional fields are never used to create policy details.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANALYSIS STATUS (hidden until analysis starts)
+  ============================================================ -->
+  <section id="stat" hidden aria-labelledby="stat-h2" aria-live="polite">
+    <div class="w">
+      <h2 id="stat-h2">Analysing your document…</h2>
+      <ol class="st" id="sl" aria-label="Analysis progress"></ol>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RESULTS (hidden until analysis completes)
+  ============================================================ -->
+  <section id="res" hidden aria-labelledby="res-h2">
+    <div class="w">
+      <h2 id="res-h2" class="vh">Your results</h2>
+      <div id="prev"></div>
+      <div id="full"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       WHY POLICIES ARE HARD
+  ============================================================ -->
+  <section aria-labelledby="hard-h2">
+    <div class="w">
+      <h2 id="hard-h2">Insurance documents are hard to read for a reason.</h2>
+      <p class="mu" style="max-width:700px; margin-bottom:24px;">
+        Australian motor-insurance documents can contain detailed excess rules, exclusions,
+        benefit limits, driver conditions and claim requirements. Small wording differences
+        can affect what you pay after an incident and whether a claim is straightforward.
+      </p>
+      <div class="g" id="prob"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HOW IT WORKS
+  ============================================================ -->
+  <section id="how" style="background:var(--cd);" aria-labelledby="how-h2">
+    <div class="w">
+      <h2 id="how-h2">Upload. Decode. Understand.</h2>
+      <div class="g" id="hw"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       WHAT WE CHECK
+  ============================================================ -->
+  <section id="check" aria-labelledby="check-h2">
+    <div class="w">
+      <h2 id="check-h2">What PolicyLens AU checks</h2>
+      <p class="mu" style="margin-bottom:20px;">
+        A category appears in your report only if matching wording is found in your uploaded document.
+      </p>
+      <div class="g c" id="cats" role="list" aria-label="Policy analysis categories"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       WHY TRUST US
+  ============================================================ -->
+  <section style="background:var(--cd);" aria-labelledby="trust-h2">
+    <div class="w">
+      <h2 id="trust-h2">Why you can trust PolicyLens AU</h2>
+      <div class="g" id="tr"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       COMPARISON TABLE
+  ============================================================ -->
+  <section aria-labelledby="cmp-h2">
+    <div class="w">
+      <h2 id="cmp-h2">PolicyLens AU versus a generic AI chatbot</h2>
+      <p class="mu" style="margin-bottom:20px;">
+        Generic AI tools can be useful for general questions, but they are not a substitute for
+        a document-specific policy review.
+      </p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Generic AI chatbot</th>
+              <th scope="col">PolicyLens AU</th>
+            </tr>
+          </thead>
+          <tbody id="cmp"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PRICING
+  ============================================================ -->
+  <section id="pricing" style="background:var(--cd);" aria-labelledby="pricing-h2">
+    <div class="w">
+      <h2 id="pricing-h2">Simple, one-time pricing</h2>
+      <div class="g pr" id="pg" style="margin-bottom:20px;"></div>
+      <p class="sm mu">Payment methods: credit or debit card, Apple Pay, Google Pay.</p>
+      <p class="sm">
+        <strong>
+          If we make a confirmed factual error about your uploaded policy, contact support
+          through your account and we will review it. If confirmed, you receive a full refund.
+        </strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAQ
+  ============================================================ -->
+  <section id="faq" aria-labelledby="faq-h2">
+    <div class="w">
+      <h2 id="faq-h2">Frequently asked questions</h2>
+      <div id="fq" style="margin-top:8px;"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       POLICIES
+  ============================================================ -->
+  <section id="policies" style="background:var(--cd);" aria-labelledby="pol-h2">
+    <div class="w">
+      <h2 id="pol-h2">Policies and transparency</h2>
+      <div id="pol" style="margin-top:8px;"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       BOTTOM CTA
+  ============================================================ -->
+  <section aria-labelledby="cta-h2">
+    <div class="w" style="text-align:center; max-width:620px;">
+      <h2 id="cta-h2">Understand your policy before you need it.</h2>
+      <p class="mu">
+        Upload your Australian motor-insurance document and get a plain-English view
+        of the terms that matter.
+      </p>
+      <a class="btn" href="#upload" style="margin:16px 0 8px; display:inline-block;">Decode my policy</a>
+      <p class="sm mu">Educational policy analysis only. Not legal, financial, insurance or claims advice.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="w">
+    <div class="footer-left">
+      <a class="logo" href="#top" style="display:inline-block;margin-bottom:8px;">Policy<b>Lens</b> AU</a><br>
+      <span>PolicyLens AU does not sell insurance.</span>
+      <span id="abn"></span><br>
+      Educational policy analysis only. Not legal, financial, insurance or claims advice.
+    </div>
+    <div class="footer-right">
+      <p style="margin:0;">
+        <a href="#how" style="color:var(--mu);text-decoration:none;margin-right:14px;">How it works</a>
+        <a href="#pricing" style="color:var(--mu);text-decoration:none;margin-right:14px;">Pricing</a>
+        <a href="#faq" style="color:var(--mu);text-decoration:none;margin-right:14px;">FAQ</a>
+        <a href="#policies" style="color:var(--mu);text-decoration:none;">Policies</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to top button -->
+<button id="btt" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- ============================================================
+     PDF.js — loaded from CDN (v3.11.174)
+     Worker is set programmatically below; the extra script tag
+     for the worker is NOT needed and has been removed.
+============================================================ -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+
+<script>
+/* =============================================================
+   CONFIGURATION (edit these at deploy time)
+============================================================= */
+const CFG = {
+  payUrl:    '',         // Payment / checkout URL
+  devUnlock: false,      // Set true to skip payment gate in development
+  prices: {
+    full:   '[PRICE]',
+    family: '[PRICE]',
+  },
+  abn: '',               // e.g. '12 345 678 901'
+};
+
+const RV = '1.0.0';
+const RD = '11 October 2026';
+
+/* =============================================================
+   AFFILIATE CONFIG
+============================================================= */
+const AFF = {
+  partner:    '[PARTNER NAME — not yet approved]',
+  siteName:   'PolicyLens AU',
+  url:        '',
+  idParam:    'aid',
+  trackingId: '',
+  source:     'policylens_au',
+  trackUrl:   '',
+  devShow:    false,
+  highExcess: 1000,
+  enabled: { afterPreview: true, contextual: true, renewal: true },
+  short: 'Affiliate disclosure: We may receive a commission if you use this link and purchase a policy. This does not affect the price you pay. We do not compare all insurers or policies.',
+  qual:  'Comparison services do not compare every insurer or policy. Check the provider\'s website, Financial Services Guide and Product Disclosure Statement before making a decision.',
+};
+AFF.full = () =>
+  `Affiliate disclosure: ${AFF.siteName} is an educational website. We do not sell insurance, provide personal advice, or recommend a particular insurer. Some links on this website are affiliate links. If you click a link and obtain a quote or purchase an insurance product, we may receive a commission from the provider or comparison service. This does not increase the price you pay. We do not compare all insurers or products in the Australian market.`;
+
+/* =============================================================
+   AFFILIATE HELPERS
+============================================================= */
+function affHref(l) {
+  if (!AFF.url) return '';
+  try {
+    const u = new URL(AFF.url);
+    if (AFF.trackingId) u.searchParams.set(AFF.idParam, AFF.trackingId);
+    u.searchParams.set('utm_source',   AFF.source);
+    u.searchParams.set('utm_medium',   'affiliate');
+    u.searchParams.set('utm_campaign', l);
+    u.searchParams.set('utm_content',  l);
+    return u.href;
+  } catch (e) { return ''; }
+}
+
+function affBox(on, l, head, copy, btn) {
+  if (!on || !(AFF.url || AFF.devShow)) return '';
+  const h = affHref(l);
+  return `<aside class="aff np" aria-label="Affiliate content">
+    <h4>${head}</h4>
+    <p>${copy}</p>
+    <p>${h
+      ? `<a class="btn s" href="${esc(h)}" target="_blank" rel="sponsored noopener noreferrer" data-aff="${l}">${btn}<span class="vh"> (sponsored link, opens in a new tab)</span></a>`
+      : `<span class="btn s" aria-disabled="true">${btn} (affiliate link not configured)</span>`
+    }</p>
+    <p class="d">${AFF.short}</p>
+    <p class="d">${AFF.qual}</p>
+  </aside>`;
+}
+
+const renBox  = () => affBox(AFF.enabled.renewal,  'renewal_notice_compare_quotes', 'Renewing soon?', 'Before you renew, review your current excesses, exclusions, benefit limits and claim conditions. You can also compare car-insurance quotes from participating providers.', 'Compare quotes →');
+const prevBox = () => affBox(AFF.enabled.afterPreview, 'compare_car_insurance_after_preview', 'Your current policy may not be your only option.', 'If your policy has a high excess, limited hire-car cover, restrictive driver conditions or a coverage gap, it may be worth comparing alternative car-insurance policies before renewal.', 'Compare car insurance quotes →');
+
+/* Contextual affiliate CTAs indexed by rule number */
+const CTX = [
+  { i: 0,  k: 'report_high_excess',    test: x => (x.q.match(/\$\s?[\d,]+/g) || []).some(s => +s.replace(/\D/g,'') >= AFF.highExcess), h: 'Excess may affect your out-of-pocket cost',      c: 'Your policy sets out a basic excess that may apply after certain claims. If this does not suit your budget, you can compare policies with different excess structures.',              b: 'Compare car insurance quotes →' },
+  { i: 4,  k: 'report_unlisted_driver', test: x => /excess/i.test(x.q),                                                                  h: 'Driver conditions can change your cost',          c: 'This policy includes an additional excess for certain drivers. Before renewal, you may want to compare how different policies treat listed and unlisted drivers.',                   b: 'Compare driver-condition rules →' },
+  { i: 16, k: 'report_hire_car',        test: x => /limit|up to|maximum|capped|\$\s?\d|\d+\s?days/i.test(x.q),                           h: 'Hire-car cover may be limited',                   c: 'Your policy includes a hire-car benefit with a limit or condition. If this is important to you, compare policies with different hire-car arrangements.',                           b: 'Compare hire-car cover →' },
+  { i: 14, k: 'report_windscreen',      test: x => /excess|limit|\$\s?\d/i.test(x.q),                                                    h: 'Glass cover may have a separate cost',            c: 'Your policy may apply a separate excess or limitation to windscreen or glass claims. You can compare policies with different glass-cover terms.',                                   b: 'Compare glass-cover options →' },
+  { i: 7,  k: 'report_modifications',   test: x => /not (covered|insured)|exclud|must|declare|unless|only|limit|restrict/i.test(x.q),    h: 'Modifications may affect cover',                  c: 'Your policy contains conditions or exclusions relating to modifications. If your vehicle has modifications, compare policies and check their terms carefully.',                      b: 'Compare modification cover →' },
+  { i: 6,  k: 'report_vehicle_value',   test: x => /market value|agreed value/i.test(x.q),                                               h: 'Vehicle value affects settlement',                c: 'Your policy sets out how the vehicle value is determined. Before renewal, compare policies and check how each insurer calculates vehicle value.',                                   b: 'Compare vehicle-value options →' },
+  { i: 10, k: 'report_vehicle_usage',   test: x => /not|exclud|only|must|unless|restrict|condition|hire or reward|business/i.test(x.q),  h: 'Vehicle use may be restricted',                   c: 'Your policy contains conditions around how the vehicle may be used. If your usage has changed, compare policies that suit your circumstances.',                                      b: 'Compare usage-based options →' },
+];
+
+const pickCta = F => {
+  for (const x of [...F].sort((a, b) => 'CMI'.indexOf(a.sev) - 'CMI'.indexOf(b.sev) || a.i - b.i)) {
+    const d = CTX.find(c => c.i === x.i && c.test(x));
+    if (d) return { x, d };
+  }
+};
+
+/* Track affiliate clicks */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-aff]');
+  if (!a) return;
+  const d = { placement: a.dataset.aff, t: Date.now() };
+  document.dispatchEvent(new CustomEvent('policylens:affiliate_click', { detail: d }));
+  if (AFF.trackUrl && navigator.sendBeacon) navigator.sendBeacon(AFF.trackUrl, JSON.stringify(d));
+});
+
+/* =============================================================
+   SEVERITY LABELS
+============================================================= */
+const SV = { C: ['Critical', 'cr'], M: ['Moderate', 'mo'], I: ['Informational', 'in'] };
+
+/* =============================================================
+   RULES
+   [category, severity, pattern, why it matters, question, loose-match flag]
+============================================================= */
+const R = [
+  ['Basic excess',                   'M', /basic excess|standard excess/i,                                                                                          'The excess is what you pay towards each claim before the insurer pays.',                                   'Ask what your total excess would be in a typical at-fault claim.'],
+  ['Additional excess',              'M', /(additional|imposed|special|extra) excess/i,                                                                             'Extra excesses can be added to the basic excess in set circumstances.',                                    'Ask which circumstances add excess and whether amounts stack.'],
+  ['Age-based excess',               'M', /age[- ]?(based )?excess|(under|younger than|aged under)\s?(2[0-9]|3[0-9])\b/i,                                          'Drivers under a stated age may trigger a higher excess.',                                                  'Check whether any regular driver falls inside the age band.'],
+  ['Inexperienced-driver excess',    'M', /inexperienced|learner|provisional|licen[cs]e (held )?for (less|fewer)/i,                                                 'Newer licence holders can attract an extra excess or conditions.',                                          'Ask how licence experience is measured and who it applies to.'],
+  ['Unlisted-driver excess',         'M', /unlisted|not (listed|named|nominated)|nominated drivers?|named drivers?/i,                                               'Cover or excess can change if the driver isn\'t listed on the policy.',                                    'Confirm who is listed and what applies if someone else drives.'],
+  ['Excess waivers',                 'I', /waive|excess[- ]free/i,                                                                                                  'Waivers usually apply only in specific situations.',                                                        'Ask exactly when the waiver applies.', 1],
+  ['Agreed and market value',        'I', /agreed value|market value|sum insured/i,                                                                                 'The basis of valuation affects what is paid if the car is written off.',                                   'Check the stated value and how it is set or reviewed.'],
+  ['Modifications and accessories',  'M', /modif(ied|ication)|aftermarket|non[- ]standard (parts|accessor)/i,                                                       'Modifications may need to be declared or may be limited.',                                                 'List any modifications and ask whether each is covered.'],
+  ['Unroadworthy vehicle',           'C', /unroadworth|not roadworthy|defective|mechanical (defect|failure)/i,                                                      'Conditions about vehicle condition can affect a claim.',                                                    'Ask how roadworthiness is assessed after an incident.'],
+  ['Off-road and recreational use',  'C', /off[- ]road|\bracing\b|\brace\b|speed (trial|test)|track day|competition/i,                                             'Some uses of the vehicle may fall outside cover.',                                                         'Ask whether your normal use is covered.'],
+  ['Rideshare, delivery and business use', 'C', /ride[- ]?share|\buber\b|\bdelivery\b|hire or reward|carry(ing)? passengers for|business use|commercial use/i,     'Using the vehicle for income or business may be restricted.',                                               'Tell your insurer how the vehicle is used and get confirmation in writing.'],
+  ['Driver eligibility and licence conditions', 'C', /unlicen[cs]ed|licen[cs]e[^.]{0,60}(suspended|cancelled|disqualified|expired)|alcohol|under the influence|\bdrugs?\b/i, 'Who is driving, and their licence or condition, can affect cover.', 'Ask which driver conditions apply to every regular driver.'],
+  ['Theft cover',                    'M', /theft|stolen|keys?[^.]{0,40}(left|unattended)|unlocked/i,                                                                'Theft cover may depend on how the vehicle and keys were secured.',                                          'Ask what security steps the policy expects.'],
+  ['Storm, flood and hail',          'M', /\b(storm|flood|hail|bushfire)\b/i,                                                                                       'Weather cover and its definitions can vary.',                                                               'Check how weather events are defined and any limits.'],
+  ['Windscreen and glass',           'I', /windscreen|glass/i,                                                                                                      'Glass cover may have its own excess or limit.',                                                             'Ask whether glass claims have a separate excess.', 1],
+  ['Towing and roadside assistance', 'I', /towing|\btow\b|roadside/i,                                                                                               'Towing may be capped or conditional.',                                                                      'Ask about distance and amount limits.'],
+  ['Hire car',                       'M', /hire car|rental car|rent(al)? vehicle|temporary (car|vehicle)/i,                                                         'Hire car benefits are often capped by days or amount.',                                                    'Check the daily limit and total days.'],
+  ['Choice of repairer',             'I', /choice of repairer|(approved|preferred|nominated|authori[sz]ed) repairer/i,                                              'Repairer rules can affect repair timing and guarantees.',                                                  'Ask whether you can choose your own repairer.'],
+  ['Personal effects',               'M', /personal (effects|belongings|items)/i,                                                                                   'Personal items are commonly subject to a low sub-limit.',                                                  'Check the limit and what is excluded.'],
+  ['Child seats',                    'I', /child (restraint|seat|car seat)|baby capsule|capsule/i,                                                                   'Child seat cover may be capped or need replacement after an incident.',                                    'Ask what is paid for replacement.'],
+  ['Trailers, caravans and accessories', 'M', /trailer|caravan/i,                                                                                                   'Towed items may be excluded or limited.',                                                                   'Ask whether any trailer you use is covered.'],
+  ['Claim notification',             'M', /(notify|tell|inform|report)[^.]{0,80}(as soon as|within|immediately|promptly)|as soon as (possible|practicable)/i,       'Notification timeframes can affect the claims experience.',                                                 'Note the timeframe and how to notify.'],
+  ['Evidence and documentation',     'I', /police report|event number|receipts?|photographs?|evidence|repair quote/i,                                               'The insurer may ask for documents to support a claim.',                                                    'Ask which documents you should keep.', 1],
+  ['Cancellation and non-disclosure','M', /duty of disclosure|non[- ]disclosure|misrepresent|cancel(l)?(ation|ed)/i,                                                'Incorrect or missing information can affect cover or cancellation.',                                        'Check your answers on the application are accurate.'],
+  ['Complaints and dispute information', 'I', /\bAFCA\b|Australian Financial Complaints|dispute resolution|complaints?/i,                                           'Explains how to raise a dispute.',                                                                         'Note the internal and external complaint steps.'],
+];
+
+const G = i =>
+  i < 6  ? 'Excess' :
+  i < 8  ? 'Value and modifications' :
+  i < 12 ? 'Driver and usage conditions' :
+  i < 21 ? 'Cover, sub-limits and benefits' :
+  i < 23 ? 'Claim requirements' :
+           'Policy terms and disputes';
+
+/* =============================================================
+   FAQ & POLICIES
+============================================================= */
+const FAQ = [
+  ['How is PolicyLens AU different from asking ChatGPT?',
+   'ChatGPT and similar tools can explain general insurance concepts, but they may quote clauses that are not in your document or miss policy-specific details. PolicyLens AU is designed to analyse the document you upload and present findings linked to its wording.'],
+  ['What documents can I upload?',
+   'You can upload an Australian motor-insurance PDS, policy schedule, renewal notice or quote PDF. A policy schedule is especially useful because it often contains your specific excess, vehicle value and selected optional covers.'],
+  ['Which policies are supported?',
+   'Australian comprehensive, third-party property damage, third-party fire and theft, motorcycle and commercial motor policies are supported in version 1.'],
+  ['Will PolicyLens AU tell me whether my claim will be paid?',
+   'No. We cannot predict claim outcomes. The tool helps you understand policy wording, potential coverage gaps, excesses, limitations and claim requirements.'],
+  ['Is this legal or financial advice?',
+   'No. PolicyLens AU is an educational analysis tool. It is not legal, financial, insurance or claims advice. For an insurance dispute, contact your insurer\'s complaints team or the Australian Financial Complaints Authority.'],
+  ['Is my document safe?',
+   'Your document is read inside your browser and is not sent to a server. It is not sold or shared and is not used to train AI models. Nothing is kept once you close or refresh the page.'],
+  ['Do I need an account?',
+   'No account is required to upload a document and receive the free preview. An email address is optional for receiving the full report.'],
+  ['What if the analysis is wrong?',
+   'Every material finding is designed to be checked against your uploaded document. If you believe a finding is factually incorrect, use the report-review option in your account. If a confirmed factual error is identified, you receive a full refund.'],
+];
+
+const POL = [
+  ['Privacy policy',
+   'This version reads your PDF inside your browser and does not send it to a server. Nothing is stored after you close or refresh the page. The PDF reader loads from cdnjs.cloudflare.com and fonts from Google Fonts, which may receive your IP address. If you click an affiliate link, the destination site\'s own privacy policy applies; we pass only the placement label in the link, never your document.'],
+  ['Terms of use',
+   'For educational use only. Findings come from keyword matching and can miss or misread wording. Check every finding against your document before relying on it.'],
+  ['Refund policy',
+   'If we make a confirmed factual error about your uploaded policy, contact support through your account and we will review it. If confirmed, you receive a full refund.'],
+  ['AI transparency',
+   'Rule version ' + RV + ' (effective ' + RD + '). Findings come from a rule-based keyword engine, not a generative AI model: it finds wording, quotes it, and attaches a fixed explanation. The rules have not yet been reviewed by a qualified Australian lawyer or insurance specialist.'],
+  ['Data retention',
+   'This version keeps no document data. If a server is added, retention must be limited to analysis and deletion after report generation, and this statement updated first.'],
+  ['Accessibility',
+   'Built for keyboard use with contrast-aware colours and a light/dark theme. Not yet formally audited against WCAG 2.1 AA.'],
+  ['Affiliate disclosure', AFF.full()],
+];
+
+/* =============================================================
+   UTILITY
+============================================================= */
+const $   = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const card = (h, p, num) =>
+  `<div class="card">
+    ${num !== undefined ? `<div class="step-num" aria-hidden="true">${num}</div>` : ''}
+    <h3>${h}</h3>
+    <p>${p}</p>
+  </div>`;
+
+/* =============================================================
+   POPULATE STATIC SECTIONS
+============================================================= */
+$('#prob').innerHTML = [
+  ['Excess confusion',    'Basic excess, additional excess, age excess, inexperienced-driver excess and unlisted-driver excess can apply in different circumstances.'],
+  ['Coverage limits',     'Benefits such as hire car, towing, personal effects, child seats, trailers and windscreen cover may be capped or conditional.'],
+  ['Claim requirements',  'Notification timeframes, evidence requirements, repair processes and policy conditions can affect the claims experience.'],
+].map(a => card(...a)).join('');
+
+$('#hw').innerHTML = [
+  ['Upload your document',      'Add your PDS, policy schedule, renewal notice or quote PDF. No sign-up required.',   1],
+  ['We analyse the wording',    'The engine checks for excesses, exclusions, sub-limits, driver conditions, vehicle-use restrictions and claim requirements.', 2],
+  ['You get plain-English findings', 'Review severity flags, supporting wording, practical questions and a downloadable report.', 3],
+].map(a => card(...a)).join('');
+
+$('#cats').innerHTML = R.map(r =>
+  `<div class="chip" role="listitem">${r[0]}</div>`
+).join('');
+
+$('#tr').innerHTML = [
+  ['Built for Australian motor insurance', 'The framework is designed around Australian PDS structure, policy schedules and motor-insurance terminology.'],
+  ['Findings tied to your document',       'Each material finding shows the supporting wording and page reference behind it.'],
+  ['Structured checks, not generic chat',  'A fixed review process for motor-insurance documents, not open-ended conversation.'],
+  ['Plain English',                        'Policy wording is translated into practical language, with the original wording shown for verification.'],
+  ['Privacy-first',                        'In this version your document stays in your browser and isn\'t used to train AI models.'],
+  ['Transparent limitations',              'We explain what the tool can and cannot assess, and we do not give legal, financial, insurance or claims advice.'],
+].map(a => card(...a)).join('');
+
+$('#cmp').innerHTML = [
+  ['Can provide general insurance explanations',       'Provides document-specific analysis based on the uploaded policy'],
+  ['May quote clauses not present in the document',    'Material findings are linked to wording in your uploaded document'],
+  ['No consistent motor-insurance workflow',           'Uses structured checks for Australian motor-insurance documents'],
+  ['Output quality can vary by prompt',                'Produces a consistent report format'],
+  ['No clear policy-specific action list',             'Provides practical questions and next steps based on findings'],
+  ['May not distinguish PDS, schedule and renewal-notice roles', 'Allows you to specify the document type being analysed'],
+].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+
+$('#pg').innerHTML = [
+  ['Free preview',  '$0',            'Overall assessment, number of findings by severity, and top three finding titles.', false],
+  ['Full report',   CFG.prices.full, 'Complete findings, supporting wording, excess summary, action list and downloadable PDF.', true],
+  ['Family pack',   CFG.prices.family, 'Multiple report credits for household vehicles, valid for 12 months.', false],
+].map(([name, price, desc, popular]) =>
+  `<div class="card" style="position:relative;">
+    ${popular ? '<span class="badge" aria-label="Most popular">Most popular</span>' : ''}
+    <h3>${name}</h3>
+    <b>${price}</b>
+    <p>${desc}</p>
+   </div>`
+).join('');
+
+$('#fq').innerHTML  = FAQ.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('');
+$('#pol').innerHTML = POL.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('');
+
+/* ABN in footer */
+if (CFG.abn) $('#abn').textContent = ' ABN ' + CFG.abn + '.';
+
+/* =============================================================
+   PDF.js WORKER SETUP
+============================================================= */
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+/* =============================================================
+   ERROR MESSAGES
+============================================================= */
+const MSG_SCANNED = 'We couldn\'t read enough text from this document. Please upload a text-based PDF rather than a scanned image, or try your policy schedule or renewal notice.';
+
+const STEPS = [
+  'Extracting text from your document',
+  'Identifying policy sections',
+  'Checking excess and driver conditions',
+  'Checking exclusions and limitations',
+  'Preparing your plain-English findings',
+];
+
+/* =============================================================
+   ANALYSIS STEP DISPLAY
+============================================================= */
+const steps = n => {
+  $('#sl').innerHTML = STEPS.map((s, i) => {
+    let cls = '';
+    if (i < n)  { cls = 'd'; }
+    if (i === n) { cls = 'a'; }
+    const spinner = (i === n) ? '<span class="spinner" aria-hidden="true"></span>' : '';
+    return `<li class="${cls}" aria-current="${i === n ? 'step' : 'false'}">${spinner}${s}</li>`;
+  }).join('');
+};
+
+const tick = () => new Promise(r => setTimeout(r, 40));
+
+/* =============================================================
+   PDF TEXT EXTRACTION
+============================================================= */
+async function extract(file) {
+  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+  const out = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page    = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    out.push(content.items.map(x => x.str).join(' ').replace(/\s+/g, ' ').trim());
+  }
+  return out;
+}
+
+/* =============================================================
+   KEYWORD MATCHING ENGINE
+============================================================= */
+function run(rules, pages, off) {
+  const out = [];
+  rules.forEach(([cat, sev, re, why, ask, loose], k) => {
+    const g = new RegExp(re.source, 'gi');
+    const c = [];
+    pages.forEach((t, i) => {
+      let m;
+      g.lastIndex = 0;
+      while (c.length < 8 && (m = g.exec(t))) {
+        const a = t.lastIndexOf('. ', m.index);
+        const s = (a < 0 || m.index - a > 200) ? Math.max(0, m.index - 150) : a + 2;
+        const e = Math.min(t.length, m.index + m[0].length + 220);
+        c.push({ p: i + 1, q: (s > 0 ? '…' : '') + t.slice(s, e).trim() + (e < t.length ? '…' : '') });
+      }
+    });
+    if (!c.length) return;
+    const N    = /\$\s?\d|\d+\s?(days?|hours?|%)/i;
+    const pick = c.find(x => N.test(x.q)) || c[0];
+    const num  = N.test(pick.q);
+    out.push({
+      i: off + k, cat, sev, why, ask,
+      q: pick.q, p: pick.p, n: c.length,
+      conf: num && !loose ? 'High' : loose && !num ? 'Low' : 'Medium',
+    });
+  });
+  return out;
+}
+
+/* =============================================================
+   ERROR & FAILURE HELPERS
+============================================================= */
+const fail = m => {
+  $('#stat').hidden = true;
+  // Clear first so aria-live re-announces the same message on repeated errors
+  const errEl = $('#err');
+  errEl.textContent = '';
+  requestAnimationFrame(() => { errEl.textContent = m; });
+  $('#upload').scrollIntoView({ behavior: 'smooth' });
+};
+
+/* =============================================================
+   FILE SELECTION
+============================================================= */
+const showFileName = f => {
+  if (f) {
+    $('#fn').textContent = '📎 ' + f.name;
+    $('#dz').classList.add('drag-over');
+  }
+};
+
+$('#file').onchange = e => showFileName(e.target.files[0]);
+
+/* Drag-and-drop */
+const dz = $('#dz');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', e => { if (!dz.contains(e.relatedTarget)) dz.classList.remove('drag-over'); });
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  const files = e.dataTransfer.files;
+  if (files.length) {
+    // Can't assign to files directly in all browsers, so we check and pick
+    try { $('#file').files = files; } catch (err) { /* ignore */ }
+    showFileName(files[0]);
+  }
+});
+
+/* =============================================================
+   MAIN DECODE CLICK HANDLER
+============================================================= */
+$('#go').onclick = async () => {
+  const f  = $('#file').files[0];
+  const dt = $('#dt').value;
+  $('#err').textContent = '';
+
+  if (!f)  return fail('Please choose a PDF file before decoding.');
+  if (!/\.pdf$/i.test(f.name) && f.type !== 'application/pdf')
+           return fail('Version 1 accepts PDF files only.');
+  if (f.size > 10485760)
+           return fail('This file is over the 10 MB limit. Please upload a smaller PDF.');
+  if (!dt) return fail('Please select the document type before decoding.');
+  if (!window.pdfjsLib)
+           return fail('The PDF reader could not load. Check your connection and try again.');
+
+  $('#res').hidden  = true;
+  $('#stat').hidden = false;
+  steps(0);
+  $('#stat').scrollIntoView({ behavior: 'smooth' });
+
+  let pages;
+  try {
+    pages = await extract(f);
+  } catch (e) {
+    return fail(
+      e && e.name === 'PasswordException'
+        ? 'This PDF is password-protected or encrypted. Please upload an unprotected, text-based PDF.'
+        : MSG_SCANNED
+    );
+  }
+
+  const all = pages.join(' ');
+  if (all.length < 800 || all.length / pages.length < 100) return fail(MSG_SCANNED);
+
+  steps(1); await tick();
+
+  /* Detect policy types from document text */
+  const pol = [
+    ['Third Party Fire and Theft',   /third[- ]party,? fire (and|&) theft/i],
+    ['Third Party Property Damage',  /third[- ]party property/i],
+    ['Comprehensive',                /comprehensive/i],
+    ['Motorcycle',                   /motorcycle|motorbike/i],
+  ].filter(x => x[1].test(all)).map(x => x[0]);
+
+  steps(2); await tick();
+  const a = run(R.slice(0, 12), pages, 0);
+  steps(3); await tick();
+  const b = run(R.slice(12), pages, 12);
+  steps(4); await tick();
+
+  const F = [...a, ...b];
+  if (!F.length) return fail('We read your document but found no wording in the categories we check. Please confirm you uploaded an Australian motor-insurance document.');
+
+  /* Count by severity */
+  const cnt = { C: 0, M: 0, I: 0 };
+  F.forEach(x => cnt[x.sev]++);
+
+  /* Extract excess dollar amounts */
+  const am = [];
+  [/excess[^.$]{0,120}\$\s?([\d,]+)/gi, /\$\s?([\d,]+)[^.$]{0,60}excess/gi].forEach(r => {
+    let m;
+    while ((m = r.exec(all))) {
+      const n = +m[1].replace(/,/g, '');
+      if (n >= 50 && n <= 20000) am.push(n);
+    }
+  });
+
+  /* Overall assessment label */
+  const v =
+    cnt.C >= 3 ? 'Needs Attention' :
+    cnt.C >= 1 || cnt.M >= 6 ? 'Needs Review' :
+    cnt.M >= 3 ? 'Adequate' :
+    'Strong';
+
+  S = {
+    F, cnt, v, pol, f, dt, am,
+    ren: dt === 'Renewal notice' || $('#rn').checked || (dt !== 'Product Disclosure Statement' && /renewal (notice|invitation|certificate)/i.test(all)),
+    opt: {
+      Insurer:      $('#ins').value.trim(),
+      'Policy type': $('#pt').value,
+      State:         $('#stt').value,
+      Vehicle:       $('#vt').value,
+    },
+  };
+
+  $('#stat').hidden = true;
+  preview();
+};
+
+/* =============================================================
+   STATE
+============================================================= */
+let S;
+
+/* =============================================================
+   FREE PREVIEW
+============================================================= */
+function preview() {
+  const { F, cnt, v, am, ren } = S;
+  const top  = [...F].sort((x, y) => 'CMI'.indexOf(x.sev) - 'CMI'.indexOf(y.sev)).slice(0, 3);
+  const fmt  = n => '$' + n.toLocaleString('en-AU');
+  const minA = am.length ? Math.min(...am) : null;
+  const maxA = am.length ? Math.max(...am) : null;
+
+  const assessmentColour = { 'Needs Attention': 'var(--cr)', 'Needs Review': 'var(--mo)', 'Adequate': 'var(--in)', 'Strong': 'var(--ac)' }[v] || 'var(--ac)';
+
+  $('#prev').innerHTML = `
+    <h2>Your free preview</h2>
+    ${ren ? renBox() : ''}
+    <div class="card" style="margin-top:16px;">
+      <p style="margin-bottom:8px;">
+        Overall assessment:
+        <span class="pill" style="background:${assessmentColour};">${v}</span>
+      </p>
+      <p class="sm mu" style="margin-bottom:12px;">
+        This label reflects how many provisions were flagged for review.
+        It is not a rating of the quality of your cover.
+      </p>
+      <p>
+        <strong>${cnt.C}</strong> <span class="mu">Critical</span>&nbsp;·&nbsp;
+        <strong>${cnt.M}</strong> <span class="mu">Moderate</span>&nbsp;·&nbsp;
+        <strong>${cnt.I}</strong> <span class="mu">Informational</span>
+      </p>
+      <p style="margin-top:12px;"><strong>Top findings:</strong></p>
+      <ul>
+        ${top.map(x => `<li>${x.cat} <span class="mu">(${SV[x.sev][0]})</span></li>`).join('')}
+      </ul>
+      ${am.length ? `<p>Excess amounts mentioned: <strong>${fmt(minA)}${minA < maxA ? ' – ' + fmt(maxA) : ''}</strong></p>` : ''}
+      ${prevBox()}
+      <p class="np" style="margin-top:16px;">
+        <button class="btn" id="ul" aria-describedby="pn">Unlock full report</button>
+        &nbsp;
+        <span class="err" id="pn" role="alert" aria-live="polite"></span>
+      </p>
+    </div>
+  `;
+
+  $('#full').innerHTML = '';
+  $('#res').hidden = false;
+  $('#ul').onclick = unlock;
+  $('#res').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* =============================================================
+   UNLOCK / PAYMENT GATE
+============================================================= */
+function unlock() {
+  if (CFG.devUnlock) return report();
+  if (CFG.payUrl)    return window.open(CFG.payUrl, '_blank', 'noopener');
+  $('#pn').textContent = 'Payment isn\'t connected in this build, so the full report can\'t be unlocked yet.';
+}
+
+/* =============================================================
+   FULL REPORT
+============================================================= */
+function report() {
+  const { F, cnt, v, pol, f, dt, am, opt, ren } = S;
+  const cx = AFF.enabled.contextual && pickCta(F);
+  const D  = 'This report is educational policy analysis based on the document you uploaded. It is not legal, financial, insurance or claims advice, and it does not predict whether a claim will be paid.';
+  const fmt = n => '$' + n.toLocaleString('en-AU');
+
+  const fi = x =>
+    `<div class="fnd ${SV[x.sev][1]}" role="article" aria-label="${esc(x.cat)} finding">
+      <h4>${esc(x.cat)} <span class="tag">${SV[x.sev][0]}</span></h4>
+      <p><strong>Category:</strong> ${G(x.i)}</p>
+      <p><strong>Explanation:</strong> Your document contains wording on this topic (quoted below). Read the full clause in context before relying on this summary.</p>
+      <p><strong>Why it matters:</strong> ${x.why}</p>
+      <blockquote aria-label="Quoted policy wording">"${esc(x.q)}"</blockquote>
+      <p class="sm"><strong>Reference:</strong> page ${x.p}${x.n > 1 ? ` (${x.n - 1} further mention${x.n > 2 ? 's' : ''} found)` : ''}</p>
+      <p><strong>Question to raise with your insurer:</strong> ${x.ask}</p>
+      <p class="sm"><strong>Confidence:</strong> ${x.conf}${x.conf === 'Low' ? ' — requires human review' : ''}</p>
+      ${cx && cx.x.i === x.i ? affBox(1, cx.d.k, cx.d.h, cx.d.c, cx.d.b) : ''}
+    </div>`;
+
+  const ex  = F.filter(x => x.i < 6);
+  const act = F.filter(x => x.sev !== 'I').map(x => `<li>${x.ask} <span class="mu">(${x.cat})</span></li>`).join('');
+
+  const excessAmountsText = am.length
+    ? ` Excess amounts mentioned: ${[...new Set(am.map(n => fmt(n)))].join(', ')}.`
+    : '';
+
+  $('#full').innerHTML = `
+    <article id="report" class="card" style="margin-top:24px;">
+      <h2>PolicyLens AU Policy Analysis Report</h2>
+      <p class="dis" role="note">${D}</p>
+
+      <h3>Document details</h3>
+      <p>
+        <strong>Document analysed:</strong> ${esc(f.name)}<br>
+        <strong>Document type:</strong> ${dt}<br>
+        <strong>Date of analysis:</strong> ${new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}<br>
+        <strong>Policy types mentioned in document:</strong> ${pol.length ? pol.join(', ') : 'Not identified'}<br>
+        ${Object.entries(opt).filter(e => e[1]).map(e => `<strong>${e[0]} (provided by you):</strong> ${esc(e[1])}<br>`).join('')}
+        <strong>Rule version:</strong> ${RV}
+      </p>
+
+      <h3>Overall assessment</h3>
+      <p>
+        <span class="pill">${v}</span>
+        — ${cnt.C} Critical, ${cnt.M} Moderate, ${cnt.I} Informational.
+        <span class="sm mu">Reflects the number of flagged provisions, not the quality of cover.</span>
+      </p>
+
+      <h3>Excess summary</h3>
+      <p>${ex.length
+        ? `Excess-related wording found: ${ex.map(x => x.cat).join(', ')}.`
+        : 'No excess wording from our checks was found.'
+      }${excessAmountsText}</p>
+
+      <h3>Findings</h3>
+      ${['C', 'M', 'I'].map(s => {
+        const L = F.filter(x => x.sev === s);
+        return L.length ? `<h4>${SV[s][0]} (${L.length})</h4>` + L.map(fi).join('') : '';
+      }).join('')}
+
+      <h3>Practical action list</h3>
+      <ol>${act || '<li>Review the informational findings against your document.</li>'}</ol>
+
+      ${ren ? renBox() : ''}
+
+      <p class="sm mu" style="margin-top:20px;">Educational policy analysis only. Not legal, financial, insurance or claims advice.</p>
+      <p class="dis" role="note">${D}</p>
+      <p class="np" style="margin-top:16px;">
+        <button class="btn" onclick="print()">⬇ Download PDF report (Save as PDF)</button>
+      </p>
+    </article>
+  `;
+
+  $('#full').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* =============================================================
+   DARK MODE TOGGLE
+============================================================= */
+(function initTheme() {
+  const saved = localStorage.getItem('plens-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+
+  const btn = $('#theme-btn');
+  const updateIcon = () => {
+    const isDark =
+      document.documentElement.getAttribute('data-theme') === 'dark' ||
+      (!document.documentElement.getAttribute('data-theme') &&
+       window.matchMedia('(prefers-color-scheme: dark)').matches);
+    btn.textContent = isDark ? '☀️' : '🌙';
+    btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+  };
+  updateIcon();
+
+  btn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    let next;
+    if (!current) {
+      next = prefersDark ? 'light' : 'dark';
+    } else if (current === 'dark') {
+      next = 'light';
+    } else {
+      next = 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('plens-theme', next);
+    updateIcon();
+  });
+})();
+
+/* =============================================================
+   MOBILE NAV
+============================================================= */
+const menuBtn    = $('#menu-btn');
+const mobileNav  = $('#mobile-nav');
+
+menuBtn.addEventListener('click', () => {
+  const isOpen = mobileNav.getAttribute('hidden') === null;
+  if (isOpen) {
+    mobileNav.setAttribute('hidden', '');
+    mobileNav.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.setAttribute('aria-label', 'Open navigation menu');
+    menuBtn.textContent = '☰';
+  } else {
+    mobileNav.removeAttribute('hidden');
+    mobileNav.classList.add('open');
+    menuBtn.setAttribute('aria-expanded', 'true');
+    menuBtn.setAttribute('aria-label', 'Close navigation menu');
+    menuBtn.textContent = '✕';
+  }
+});
+
+function closeMobileNav() {
+  mobileNav.setAttribute('hidden', '');
+  mobileNav.classList.remove('open');
+  menuBtn.setAttribute('aria-expanded', 'false');
+  menuBtn.setAttribute('aria-label', 'Open navigation menu');
+  menuBtn.textContent = '☰';
+}
+
+/* Close mobile nav on Escape */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !mobileNav.hasAttribute('hidden')) closeMobileNav();
+});
+
+/* =============================================================
+   BACK TO TOP
+============================================================= */
+const btt = $('#btt');
+window.addEventListener('scroll', () => {
+  btt.classList.toggle('visible', window.scrollY > 400);
+}, { passive: true });
+</script>
+</body>
+</html>
